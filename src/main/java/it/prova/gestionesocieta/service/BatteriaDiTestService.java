@@ -92,4 +92,21 @@ public class BatteriaDiTestService {
 			throw new RuntimeException("testRimuoviSocieta.....failed");
 		System.out.println("testRimuoviSocieta.....OK");
 	}
+
+	public void testAggiornaDipendente() {
+		List<Dipendente> dipendentiSuDb = dipendenteService.listAllDipendenti();
+		if (dipendentiSuDb.isEmpty())
+			throw new RuntimeException("errore, il DB sembra essere vuoto...");
+		dipendentiSuDb.get(0).setRal(40000);
+		dipendentiSuDb.get(0).setCognome("Berulli");
+		Long idDaAggiornare = dipendentiSuDb.get(0).getId();
+
+		dipendenteService.aggiorna(dipendentiSuDb.get(0));
+
+		if (!dipendenteService.caricaSingoloDipendente(idDaAggiornare).getCognome().equals("Berulli")) {
+			System.out.println(dipendenteService.caricaSingoloDipendente(idDaAggiornare).getCognome());
+			throw new RuntimeException("testAggiornaDipendente......failed, i dati non sono aggiornati.");
+		}
+		System.out.println("testAggiornaDipendente.....OK");
+	}
 }
