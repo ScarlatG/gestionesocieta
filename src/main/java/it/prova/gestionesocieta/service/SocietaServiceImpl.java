@@ -69,4 +69,9 @@ public class SocietaServiceImpl implements SocietaService {
 
 		return entityManager.createQuery(query, Societa.class).getResultList();
 	}
+
+	@Override
+	public List<Societa> tutteSocietaConDipendentiRalMaggioreDi30000() {
+		return societaRepository.findAllSocietaWithDipendentiRalGreaterThan30000();
+	}
 }
