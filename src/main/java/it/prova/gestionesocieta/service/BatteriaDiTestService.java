@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import it.prova.gestionesocieta.exception.SocietaConAncoraDipendentiException;
 import it.prova.gestionesocieta.model.Dipendente;
 import it.prova.gestionesocieta.model.Societa;
 
@@ -68,5 +69,27 @@ public class BatteriaDiTestService {
 		if (dipendenteService.listAllDipendenti().isEmpty())
 			throw new RuntimeException("testInserisciDipendente.....failed, inserimento non avvenuto.");
 		System.out.println("testInserisciDipendente.....OK");
+	}
+
+	public void testRimuoviSocieta() {
+		List<Societa> societaSuDB = societaService.listAllSocieta();
+		if (societaSuDB.isEmpty())
+			throw new RuntimeException("testRimuoviSocieta.....failed, il DB e' gia vuoto....");
+
+		try {
+			societaService.rimuovi(societaSuDB.get(0));
+		} catch (SocietaConAncoraDipendentiException e) {
+			System.out.println("testRimuoviSocieta..... eccezione lanciata come atteso:" + e.getMessage());
+		}
+
+		societaService.caricaSingolaSocietaFetch(societaSuDB.get(0).getId()).getDipendenti().stream().forEach(dip -> {
+			dipendenteService.rimuovi(dip);
+		});
+
+		societaService.rimuovi(societaSuDB.get(0));
+
+		if (!societaService.listAllSocieta().isEmpty())
+			throw new RuntimeException("testRimuoviSocieta.....failed");
+		System.out.println("testRimuoviSocieta.....OK");
 	}
 }
